@@ -1,18 +1,20 @@
 pipeline {
     agent any
 
+    environment {
+        GIT_CREDENTIALS_ID = 'github-creds'
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/devnfo/wordpress-docker.git'
+                git credentialsId: "${GIT_CREDENTIALS_ID}", url: 'https://github.com/devnfo/wordpress-docker.git', branch: 'main'
             }
         }
+
         stage('Build & Run Docker') {
             steps {
-                script {
-                    sh 'docker-compose down || true'
-                    sh 'docker-compose up -d --build'
-                }
+                sh 'docker compose up -d --build'
             }
         }
     }
