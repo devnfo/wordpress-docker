@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/devnfo/wordpress-docker.git'
+                git url: 'https://github.com/devnfo/wordpress-docker.git', branch: 'main'
             }
         }
 
