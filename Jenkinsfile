@@ -2,53 +2,37 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'wordpress'
-        CONTAINER_NAME = 'wordpress-container'
+        COMPOSE_PROJECT_NAME = "wordpress_project"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/devnfo/wordpress-docker.git', branch: 'main'
+                git branch: 'main', url: 'https://github.com/devnfo/wordpress-docker.git'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Stop Existing Containers') {
             steps {
-                bat 'docker build -t %IMAGE_NAME% .'
+                echo "Stopping existing containers if any..."
+                bat "docker-compose down || exit 0"
             }
         }
 
-        stage('Stop Existing Container') {
+        stage('Start Services with Docker Compose') {
             steps {
-                script {
-                    def result = bat(script: "docker ps -q -f name=%CONTAINER_NAME%", returnStdout: true).trim()
-                    if (result) {
-                        bat "docker stop %CONTAINER_NAME%"
-                        bat "docker rm %CONTAINER_NAME%"
-                    } else {
-                        echo "No running container named %CONTAINER_NAME% found."
-                    }
-                }
-            }
-        }
-
-        stage('Run Docker Container') {
-            steps {
-                bat 'docker run -d -p 8080:80 --name %CONTAINER_NAME% %IMAGE_NAME%'
+                echo "Starting services with docker-compose..."
+                bat "docker-compose up -d"
             }
         }
     }
 
     post {
-        always {
-            echo "Pipeline execution complete."
-        }
         success {
-            echo "Deployment successful."
+            echo "✅ Deployment successful!"
         }
         failure {
-            echo "Deployment failed."
+            echo "❌ Deployment failed!"
         }
     }
 }
