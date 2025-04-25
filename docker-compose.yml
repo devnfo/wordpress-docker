@@ -13,17 +13,18 @@ services:
     volumes:
       - ./wp-content:/var/www/html/wp-content
     depends_on:
-      - db                       
+      - db
 
   db:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: root  
       MYSQL_DATABASE: wordpress   
-      MYSQL_USER: root   
-      MYSQL_PASSWORD: root        
+      # Removed MYSQL_USER and MYSQL_PASSWORD for the root user
     volumes:
-      - db_data:/var/lib/mysql    
+      - db_data:/var/lib/mysql
+    restart: always  # Optional: restarts the db container if it stops unexpectedly
 
 volumes:
-  db_data:                        
+  db_data:
+    driver: local
