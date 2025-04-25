@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/YOUR_USERNAME/wordpress-docker.git'
+                git 'https://github.com/devnfo/wordpress-docker.git'
             }
         }
         stage('Build & Run Docker') {
